@@ -1,6 +1,6 @@
 import { useVideoPlayer, VideoView } from "expo-video";
 import { StyleSheet, Dimensions, View, Text } from "react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import { Post } from "@/types/types";
 import { useFocusEffect } from "expo-router";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -12,6 +12,7 @@ type LearnItemProps = {
 
 export default function LearnListItem({ learnItem, isActive }: LearnItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const isCleanedUp = useRef(false);
 
   const tabBarHeight = useBottomTabBarHeight();
   const height = Dimensions.get("window").height - tabBarHeight;
@@ -22,9 +23,17 @@ export default function LearnListItem({ learnItem, isActive }: LearnItemProps) {
     player.loop = true;
   });
 
+  // Reset cleanup flag when component mounts
+  useEffect(() => {
+    isCleanedUp.current = false;
+    return () => {
+      isCleanedUp.current = true;
+    };
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
-      if (!player) return;
+      if (!player || isCleanedUp.current) return;
 
       try {
         if (isActive) {
@@ -35,15 +44,12 @@ export default function LearnListItem({ learnItem, isActive }: LearnItemProps) {
       } catch (error) {
         console.log(error);
       }
-
-      // Cleanup function - pause when losing focus
       return () => {
+        if (isCleanedUp.current) return;
+
         try {
           player.pause();
-        } catch (error) {
-          // Player already released, ignore
-          console.log("Player cleanup error (expected):", error);
-        }
+        } catch (error) {}
       };
     }, [isActive, player]),
   );

@@ -1,9 +1,27 @@
 import { Tabs } from "expo-router";
 import { FontAwesome, FontAwesome6 } from "@expo/vector-icons/";
+import { useColorScheme } from "react-native";
 
 export default function TabsLayout() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: isDark ? "#000" : "#fff",
+          elevation: 0,
+          shadowOpacity: 0,
+          shadowOffset: { width: 0, height: 0 },
+          shadowRadius: 0,
+        },
+        headerTitleStyle: {
+          color: isDark ? "#ffffff" : "#007e2e",
+          fontWeight: "bold",
+          fontSize: 24,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -14,7 +32,6 @@ export default function TabsLayout() {
           ),
         }}
       />
-      1
       <Tabs.Screen
         name="courses"
         options={{
