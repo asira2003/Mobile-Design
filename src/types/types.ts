@@ -5,3 +5,23 @@ export type Post = {
   description: string;
   type: string;
 };
+
+export interface User {
+  id: number;
+  email: string;
+  password: string;
+}
+
+export interface AuthUser {
+  id: number;
+  email: string;
+}
+
+export interface UsersData {
+  users: User[];
+}
+
+export interface LoginResult {
+  success: boolean;
+  message?: string;
+}
