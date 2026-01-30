@@ -66,7 +66,7 @@ export default function LearnListItem({ learnItem, isActive }: LearnItemProps) {
           numberOfLines={isExpanded ? undefined : 2}
           onPress={() => setIsExpanded(!isExpanded)}
         >
-          {description}
+          {description ? description : " "}
         </Text>
       </View>
     </>
