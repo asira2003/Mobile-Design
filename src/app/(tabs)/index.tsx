@@ -1,13 +1,22 @@
-import LearnListItem from "@/components/LearnListItem";
 import { View, FlatList, Dimensions, ViewToken } from "react-native";
-import learnData from "@assets/data/posts.json";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
+
+import learnData from "@assets/data/posts.json";
+import filterTypes from "@assets/data/filterTypes.json";
+import LearnListItem from "@/components/LearnListItem";
+import TypeFilterBar from "@/components/TypeFilterBar";
 
 export default function HomeScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const height = Dimensions.get("window").height - tabBarHeight;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedType, setSelectedType] = useState(
+    filterTypes[0]?.id || "TP-01",
+  );
+  const filteredData = useMemo(() => {
+    return learnData.filter((item) => item.type === selectedType);
+  }, [selectedType]);
 
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -16,10 +25,17 @@ export default function HomeScreen() {
       }
     },
   );
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
+      <TypeFilterBar
+        types={filterTypes}
+        selectedType={selectedType}
+        onSelectType={setSelectedType}
+      />
+
       <FlatList
-        data={learnData}
+        data={filteredData}
         renderItem={({ item, index }) => (
           <LearnListItem learnItem={item} isActive={index === currentIndex} />
         )}

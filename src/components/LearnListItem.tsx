@@ -20,7 +20,6 @@ export default function LearnListItem({ learnItem, isActive }: LearnItemProps) {
 
   const player = useVideoPlayer(video_url, (player) => {
     player.loop = true;
-    player.play();
   });
 
   useFocusEffect(
@@ -30,17 +29,20 @@ export default function LearnListItem({ learnItem, isActive }: LearnItemProps) {
       try {
         if (isActive) {
           player.play();
+        } else {
+          player.pause();
         }
       } catch (error) {
         console.log(error);
       }
+
+      // Cleanup function - pause when losing focus
       return () => {
         try {
-          if (!isActive) {
-            player.pause();
-          }
+          player.pause();
         } catch (error) {
-          console.log(error);
+          // Player already released, ignore
+          console.log("Player cleanup error (expected):", error);
         }
       };
     }, [isActive, player]),
