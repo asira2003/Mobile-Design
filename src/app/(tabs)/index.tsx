@@ -1,9 +1,5 @@
-import { Text, View } from "react-native";
+import LearnItem from "@/components/LearnItem";
 
 export default function HomeScreen() {
-  return (
-    <View>
-      <Text>Home Screen</Text>
-    </View>
-  );
+  return <LearnItem />;
 }

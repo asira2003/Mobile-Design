@@ -8,11 +8,13 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Learn",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome6 name="book-open" color={color} size={24} />
           ),
         }}
       />
+      1
       <Tabs.Screen
         name="courses"
         options={{
@@ -31,7 +33,6 @@ export default function TabsLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
         name="settings"
         options={{
