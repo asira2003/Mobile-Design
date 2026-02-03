@@ -1,18 +1,26 @@
 [
   {
     "id": "TP-01",
-    "title": "Nutrition & Diet"
+    "title": "Nutrition & Diet",
+    "description": "Learn about balanced diets, nutrition facts, and healthy eating habits.",
+    "img-url": "https://picsum.photos/id/10/1000/1000"
   },
   {
     "id": "TP-02",
-    "title": "Workouts & Fitness"
+    "title": "Workouts & Fitness",
+    "description": "Explore various workout routines, fitness tips, and exercise plans.",
+    "img-url": "https://picsum.photos/id/20/1000/1000"
   },
   {
     "id": "TP-03",
-    "title": "Mental Health & Mindfulness"
+    "title": "Mental Health & Mindfulness",
+    "description": "Discover techniques for mindfulness, stress management, and mental well-being.",
+    "img-url": "https://picsum.photos/id/30/1000/1000"
   },
   {
     "id": "TP-04",
-    "title": "Sleep & Recovery"
+    "title": "Sleep & Recovery",
+    "description": "Understand the importance of sleep, recovery strategies, and improving sleep quality.",
+    "img-url": "https://picsum.photos/id/40/1000/1000"
   }
 ]

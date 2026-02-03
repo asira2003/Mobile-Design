@@ -8,14 +8,27 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 type LearnItemProps = {
   learnItem: Post;
   isActive: boolean;
+  containerHeight?: number;
 };
 
-export default function LearnListItem({ learnItem, isActive }: LearnItemProps) {
+export default function LearnListItem({
+  learnItem,
+  isActive,
+  containerHeight,
+}: LearnItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isCleanedUp = useRef(false);
 
-  const tabBarHeight = useBottomTabBarHeight();
-  const height = Dimensions.get("window").height - tabBarHeight;
+  // Try to get tab bar height, fallback to 0 if not in a tab navigator
+  let tabBarHeight = 0;
+  try {
+    tabBarHeight = useBottomTabBarHeight();
+  } catch (e) {
+    // Not in a tab navigator, use default
+  }
+
+  const height =
+    containerHeight ?? Dimensions.get("window").height - tabBarHeight;
 
   const { video_url, title, description } = learnItem;
 

@@ -36,6 +36,7 @@ export default function TabsLayout() {
         name="courses"
         options={{
           title: "Courses",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome6 name="graduation-cap" color={color} size={24} />
           ),
