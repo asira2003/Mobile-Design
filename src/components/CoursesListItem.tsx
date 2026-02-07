@@ -50,7 +50,7 @@ export default function CoursesListItem({
           style={styles.container}
           imageStyle={styles.image}
           resizeMode="cover"
-          blurRadius={10}
+          blurRadius={0}
         >
           <View style={styles.overlay}>
             <Text style={styles.title}>{title}</Text>

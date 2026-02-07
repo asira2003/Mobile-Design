@@ -1,5 +1,5 @@
 import CoursesListItem from "@/components/CoursesListItem";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
 import learnData from "@assets/data/posts.json";
 import courseData from "@assets/data/filterTypes.json";
@@ -7,7 +7,9 @@ import { useMemo } from "react";
 
 export default function CoursesScreen() {
   const router = useRouter();
-
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const styles = createStyles(isDark);
   const coursesWithLessons = useMemo(() => {
     return courseData.map((course) => {
       const lessonCount = learnData.filter(
@@ -43,13 +45,14 @@ export default function CoursesScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  listContent: {
-    padding: 16,
-    gap: 16,
-  },
-});
+const createStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark ? "#000000" : "#ffffff",
+    },
+    listContent: {
+      padding: 16,
+      gap: 16,
+    },
+  });

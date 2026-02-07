@@ -19,7 +19,6 @@ export const useAuthStore = create<AuthStore>()(
 
       login: async (email: string, password: string): Promise<LoginResult> => {
         try {
-          // Simulate network delay (optional)
           await new Promise((resolve) => setTimeout(resolve, 500));
 
           const data = usersData as UsersData;

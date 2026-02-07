@@ -10,11 +10,12 @@ export default function CoursesLayout() {
         headerStyle: {
           backgroundColor: isDark ? "#000" : "#fff",
         },
-        headerTintColor: isDark ? "#ffffff" : "#007e2e",
         headerTitleStyle: {
+          color: isDark ? "#ffffff" : "#007e2e",
           fontWeight: "bold",
           fontSize: 24,
         },
+        headerShadowVisible: false,
       }}
     >
       <Stack.Screen

@@ -10,15 +10,19 @@ export default function TabsLayout() {
       screenOptions={{
         headerStyle: {
           backgroundColor: isDark ? "#000" : "#fff",
-          elevation: 0,
-          shadowOpacity: 0,
-          shadowOffset: { width: 0, height: 0 },
-          shadowRadius: 0,
         },
         headerTitleStyle: {
           color: isDark ? "#ffffff" : "#007e2e",
-          fontWeight: "bold",
           fontSize: 24,
+          fontWeight: "bold",
+        },
+        headerShadowVisible: false,
+        tabBarStyle: {
+          backgroundColor: isDark ? "#000" : "#fff",
+          borderTopWidth: 1,
+          borderTopColor: isDark ? "#333" : "#e0e0e0",
+          elevation: 0,
+          shadowOpacity: 0,
         },
       }}
     >
