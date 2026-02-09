@@ -41,6 +41,7 @@ export default function TabsLayout() {
             elevation: 0,
             shadowOpacity: 0,
           },
+          animation: "shift",
         }}
       >
         <Tabs.Screen
