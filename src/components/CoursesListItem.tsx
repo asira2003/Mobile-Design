@@ -18,7 +18,7 @@ type CoursesListItemProps = {
   onPress: (event: GestureResponderEvent) => void;
 };
 
-export default function CoursesListItem({
+function CoursesListItem({
   title,
   description,
   lessons,
@@ -121,3 +121,5 @@ const styles = StyleSheet.create({
     textShadowRadius: 15,
   },
 });
+
+export default React.memo(CoursesListItem);

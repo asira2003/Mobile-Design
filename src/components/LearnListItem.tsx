@@ -6,39 +6,46 @@ import {
   Text,
   Pressable,
   Animated,
+  ActivityIndicator,
 } from "react-native";
-import { useCallback, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Post } from "@/types/types";
-import { useFocusEffect } from "expo-router";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import Slider from "@react-native-community/slider";
 
 type LearnItemProps = {
   learnItem: Post;
   isActive: boolean;
+  shouldRender: boolean;
   containerHeight?: number;
+  onSeekingChange?: (isSeeking: boolean) => void;
 };
 
-export default function LearnListItem({
+function LearnListItem({
   learnItem,
   isActive,
+  shouldRender,
   containerHeight,
+  onSeekingChange,
 }: LearnItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const isCleanedUp = useRef(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showControls, setShowControls] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(true);
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [seekTime, setSeekTime] = useState(0);
+  const [progressBarWidth, setProgressBarWidth] = useState(0);
+  const [progressBarX, setProgressBarX] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const progressHeightAnim = useRef(new Animated.Value(3)).current;
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Try to get tab bar height, fallback to 0 if not in a tab navigator
   let tabBarHeight = 0;
   try {
     tabBarHeight = useBottomTabBarHeight();
   } catch (e) {
-    // Not in a tab navigator, use default
+    // Not in a tab navigator
   }
 
   const height =
@@ -46,22 +53,20 @@ export default function LearnListItem({
 
   const { video_url, title, description } = learnItem;
 
-  const player = useVideoPlayer(video_url, (player) => {
-    player.loop = true;
+  const player = useVideoPlayer(shouldRender ? video_url : null, (player) => {
+    if (player) {
+      player.loop = true;
+    }
   });
 
-  // Reset cleanup flag when component mounts
   useEffect(() => {
-    isCleanedUp.current = false;
     return () => {
-      isCleanedUp.current = true;
       if (hideTimeout.current) {
         clearTimeout(hideTimeout.current);
       }
     };
   }, []);
 
-  // Animate controls visibility
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: showControls ? 1 : 0,
@@ -69,7 +74,6 @@ export default function LearnListItem({
       useNativeDriver: true,
     }).start();
 
-    // Auto-hide controls after 3 seconds
     if (showControls) {
       if (hideTimeout.current) {
         clearTimeout(hideTimeout.current);
@@ -80,23 +84,42 @@ export default function LearnListItem({
     }
   }, [showControls, fadeAnim]);
 
-  // Update duration and current time
   useEffect(() => {
-    if (!player) return;
+    if (!player || !shouldRender) return;
 
     const interval = setInterval(() => {
-      if (!isCleanedUp.current) {
-        setCurrentTime(player.currentTime);
-        setDuration(player.duration);
-        setIsPlaying(player.playing);
+      setCurrentTime(player.currentTime);
+      setDuration(player.duration);
+      setIsPlaying(player.playing);
+
+      // Hide loading when video has duration and is actually playing
+      if (player.duration > 0 && player.playing) {
+        setIsBuffering(false);
       }
     }, 100);
 
     return () => clearInterval(interval);
-  }, [player]);
+  }, [player, shouldRender]);
 
-  // Control handlers
+  useEffect(() => {
+    if (!player || !shouldRender) return;
+
+    if (isActive) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }, [isActive, player, shouldRender]);
+
+  // Reset buffering state when shouldRender changes
+  useEffect(() => {
+    if (!shouldRender) {
+      setIsBuffering(true);
+    }
+  }, [shouldRender]);
+
   const handlePlayPause = () => {
+    if (!player) return;
     if (player.playing) {
       player.pause();
     } else {
@@ -105,13 +128,8 @@ export default function LearnListItem({
     setShowControls(true);
   };
 
-  const handleSeek = (value: number) => {
-    player.currentTime = value;
-    setCurrentTime(value);
-    setShowControls(true);
-  };
-
   const handleRewind = () => {
+    if (!player) return;
     const newTime = Math.max(0, player.currentTime - 10);
     player.currentTime = newTime;
     setCurrentTime(newTime);
@@ -119,10 +137,61 @@ export default function LearnListItem({
   };
 
   const handleForward = () => {
+    if (!player) return;
     const newTime = Math.min(player.duration, player.currentTime + 10);
     player.currentTime = newTime;
     setCurrentTime(newTime);
     setShowControls(true);
+  };
+
+  const handleSeekStart = (event: any) => {
+    setIsSeeking(true);
+    onSeekingChange?.(true);
+    Animated.spring(progressHeightAnim, {
+      toValue: 24,
+      useNativeDriver: false,
+    }).start();
+
+    // Calculate position immediately on touch start
+    if (!player || duration === 0 || progressBarWidth === 0) return;
+    const pageX = event.nativeEvent.pageX;
+    const relativeX = pageX - progressBarX;
+    const percentage = Math.max(0, Math.min(1, relativeX / progressBarWidth));
+    const newTime = percentage * duration;
+    setSeekTime(newTime);
+  };
+
+  const handleSeekMove = (event: any) => {
+    if (!player || duration === 0 || progressBarWidth === 0) return;
+    const pageX = event.nativeEvent.pageX;
+    const relativeX = pageX - progressBarX;
+
+    // Calculate seek time based on touch position
+    const percentage = Math.max(0, Math.min(1, relativeX / progressBarWidth));
+    const newTime = percentage * duration;
+    setSeekTime(newTime);
+  };
+
+  const handleSeekEnd = () => {
+    if (!player) {
+      // Still collapse even if player is not ready
+      setIsSeeking(false);
+      onSeekingChange?.(false);
+      Animated.spring(progressHeightAnim, {
+        toValue: 3,
+        useNativeDriver: false,
+      }).start();
+      return;
+    }
+    player.currentTime = seekTime;
+    setCurrentTime(seekTime);
+    setIsBuffering(true); // Show buffering when seeking
+    setIsSeeking(false);
+    onSeekingChange?.(false);
+    Animated.spring(progressHeightAnim, {
+      toValue: 3,
+      useNativeDriver: false,
+    }).start();
   };
 
   const formatTime = (seconds: number) => {
@@ -131,114 +200,132 @@ export default function LearnListItem({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!player || isCleanedUp.current) return;
-
-      try {
-        if (isActive) {
-          player.play();
-        } else {
-          player.pause();
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      return () => {
-        if (isCleanedUp.current) return;
-
-        try {
-          player.pause();
-        } catch (error) {}
-      };
-    }, [isActive, player]),
-  );
-
   return (
     <>
       <View style={{ height: height }}>
-        <VideoView
-          style={{ flex: 1 }}
-          player={player}
-          contentFit="cover"
-          nativeControls={false}
-        />
+        {shouldRender && player ? (
+          <>
+            <VideoView
+              style={{ flex: 1 }}
+              player={player}
+              contentFit="cover"
+              nativeControls={false}
+            />
 
-        {/* Tap area to show/hide controls */}
-        <Pressable
-          style={styles.tapArea}
-          onPress={() => setShowControls(!showControls)}
-        >
-          <Animated.View
-            style={[
-              styles.controlsContainer,
-              {
-                opacity: fadeAnim,
-                pointerEvents: showControls ? "auto" : "none",
-              },
-            ]}
-          >
-            {/* Control buttons */}
-            <View style={styles.buttonsContainer}>
-              {/* Rewind 10s */}
-              <Pressable
-                onPress={handleRewind}
-                style={({ pressed }) => [
-                  styles.controlButton,
-                  pressed && styles.controlButtonPressed,
+            {/* Show loading indicator while buffering */}
+            {isBuffering && (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#FFFFFF" />
+              </View>
+            )}
+
+            <Pressable
+              style={styles.tapArea}
+              onPress={() => setShowControls(!showControls)}
+              disabled={isSeeking}
+            >
+              <Animated.View
+                style={[
+                  styles.controlsContainer,
+                  {
+                    opacity: fadeAnim,
+                    pointerEvents: showControls ? "auto" : "none",
+                  },
                 ]}
               >
-                <View style={styles.iconContainer}>
-                  <Text style={styles.iconText}>↺</Text>
-                  <Text style={styles.secondsText}>10</Text>
+                <View style={styles.controlsInner}>
+                  <View style={styles.buttonsContainer}>
+                    <Pressable
+                      onPress={handleRewind}
+                      style={({ pressed }) => [
+                        styles.controlButton,
+                        pressed && styles.controlButtonPressed,
+                      ]}
+                    >
+                      <View style={styles.iconContainer}>
+                        <Text style={styles.iconText}>↺</Text>
+                        <Text style={styles.secondsText}>10</Text>
+                      </View>
+                    </Pressable>
+
+                    <Pressable
+                      onPress={handlePlayPause}
+                      style={({ pressed }) => [
+                        styles.playButton,
+                        pressed && styles.controlButtonPressed,
+                      ]}
+                    >
+                      <Text style={styles.playIcon}>
+                        {isPlaying ? "❚❚" : "▶"}
+                      </Text>
+                    </Pressable>
+
+                    <Pressable
+                      onPress={handleForward}
+                      style={({ pressed }) => [
+                        styles.controlButton,
+                        pressed && styles.controlButtonPressed,
+                      ]}
+                    >
+                      <View style={styles.iconContainer}>
+                        <Text style={styles.iconText}>↻</Text>
+                        <Text style={styles.secondsText}>10</Text>
+                      </View>
+                    </Pressable>
+                  </View>
                 </View>
-              </Pressable>
+              </Animated.View>
+            </Pressable>
 
-              {/* Play/Pause */}
+            {/* TikTok-style horizontal progress bar */}
+            <Animated.View
+              style={[styles.progressBar, { height: progressHeightAnim }]}
+            >
               <Pressable
-                onPress={handlePlayPause}
-                style={({ pressed }) => [
-                  styles.playButton,
-                  pressed && styles.controlButtonPressed,
-                ]}
+                style={styles.progressPressable}
+                onTouchStart={handleSeekStart}
+                onTouchMove={handleSeekMove}
+                onTouchEnd={handleSeekEnd}
+                onTouchCancel={handleSeekEnd}
+                onLayout={(event) => {
+                  const { width, x } = event.nativeEvent.layout;
+                  setProgressBarWidth(width);
+                  // Measure absolute position
+                  event.target.measure((fx, fy, width, height, px, py) => {
+                    setProgressBarX(px);
+                  });
+                }}
+                hitSlop={{ top: 40, bottom: 40, left: 0, right: 0 }}
               >
-                <Text style={styles.playIcon}>{isPlaying ? "❚❚" : "▶"}</Text>
-              </Pressable>
-
-              {/* Forward 10s */}
-              <Pressable
-                onPress={handleForward}
-                style={({ pressed }) => [
-                  styles.controlButton,
-                  pressed && styles.controlButtonPressed,
-                ]}
-              >
-                <View style={styles.iconContainer}>
-                  <Text style={styles.iconText}>↻</Text>
-                  <Text style={styles.secondsText}>10</Text>
+                <View style={styles.progressTrack}>
+                  <Animated.View
+                    style={[
+                      styles.progressFill,
+                      {
+                        width: `${duration > 0 ? ((isSeeking ? seekTime : currentTime) / duration) * 100 : 0}%`,
+                      },
+                    ]}
+                  />
                 </View>
+                {isSeeking && (
+                  <View style={styles.seekTimeContainer}>
+                    <Text style={styles.seekTimeText}>
+                      {formatTime(seekTime)} / {formatTime(duration)}
+                    </Text>
+                  </View>
+                )}
               </Pressable>
-            </View>
-
-            {/* Progress bar at bottom */}
-            <View style={styles.progressContainer}>
-              <Slider
-                style={styles.slider}
-                minimumValue={0}
-                maximumValue={duration || 1}
-                value={currentTime}
-                onSlidingComplete={handleSeek}
-                onSlidingStart={() => setShowControls(true)}
-                minimumTrackTintColor="#FFFFFF"
-                maximumTrackTintColor="rgba(255, 255, 255, 0.3)"
-                thumbTintColor="#FFFFFF"
-              />
-            </View>
-          </Animated.View>
-        </Pressable>
+            </Animated.View>
+          </>
+        ) : (
+          // Loading indicator instead of placeholder
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#FFFFFF" />
+          </View>
+        )}
       </View>
 
-      <View style={styles.titleContainer}>
+      <View style={[styles.titleContainer, { opacity: isSeeking ? 0 : 1 }]}>
         <Text style={styles.title}>{title}</Text>
         <Text
           style={styles.description}
@@ -268,17 +355,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: "space-between",
-    paddingVertical: 40,
-    paddingHorizontal: 24,
     backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+  controlsInner: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: 50,
-    flex: 1,
   },
   controlButton: {
     width: 56,
@@ -325,27 +413,49 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "700",
   },
-  progressContainer: {
+  progressBar: {
     position: "absolute",
-    bottom: 10,
+    bottom: 0,
+    left: 8,
+    right: 8,
+    height: 3,
+    justifyContent: "center",
+    zIndex: 100,
+    elevation: 100,
+    borderRadius: 20,
+  },
+  progressPressable: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 20,
+  },
+  progressTrack: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    overflow: "hidden",
+    borderRadius: 20,
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+  },
+  seekTimeContainer: {
+    position: "absolute",
+    top: -40,
     left: 0,
     right: 0,
-    flexDirection: "row",
     alignItems: "center",
-    zIndex: 100,
   },
-  slider: {
-    flex: 1,
-    height: 1,
-    marginHorizontal: 0,
-  },
-  timeText: {
+  seekTimeText: {
     color: "white",
-    fontSize: 13,
-    fontWeight: "600",
-    fontVariant: ["tabular-nums"],
-    minWidth: 42,
-    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "700",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   titleContainer: {
     position: "absolute",
@@ -353,20 +463,32 @@ const styles = StyleSheet.create({
     left: 0,
     right: 8,
     padding: 16,
+    zIndex: 1,
+    pointerEvents: "none",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "white",
-    // textShadowColor: "rgba(0, 0, 0, 0.51)",
-    // textShadowOffset: { width: 1, height: 1 },
-    // textShadowRadius: 15,
   },
-
   description: {
     fontSize: 13,
     color: "white",
     textAlign: "justify",
     lineHeight: 20,
   },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
+
+export default React.memo(LearnListItem);
