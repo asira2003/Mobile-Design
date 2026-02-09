@@ -1,6 +1,7 @@
 import { View, FlatList, Dimensions, ViewToken } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { useLocalSearchParams } from "expo-router";
 
 import learnData from "@assets/data/posts.json";
 import filterTypes from "@assets/data/filterTypes.json";
@@ -8,12 +9,20 @@ import LearnListItem from "@/components/LearnListItem";
 import TypeFilterBar from "@/components/TypeFilterBar";
 
 export default function HomeScreen() {
+  const { courseId } = useLocalSearchParams<{ courseId?: string }>();
   const tabBarHeight = useBottomTabBarHeight();
   const height = Dimensions.get("window").height - tabBarHeight;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedType, setSelectedType] = useState(
     filterTypes[0]?.id || "TP-01",
   );
+
+  // Automatically select course when courseId is provided
+  useEffect(() => {
+    if (courseId) {
+      setSelectedType(courseId);
+    }
+  }, [courseId]);
   const filteredData = useMemo(() => {
     return learnData.filter((item) => item.type === selectedType);
   }, [selectedType]);

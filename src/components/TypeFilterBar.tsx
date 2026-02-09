@@ -1,4 +1,11 @@
-import { ScrollView, TouchableOpacity, Text, StyleSheet } from "react-native";
+import {
+  ScrollView,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  View,
+} from "react-native";
+import { useRef, useEffect, useState } from "react";
 
 interface FilterType {
   id: string;
@@ -16,31 +23,58 @@ export default function TypeFilterBar({
   selectedType,
   onSelectType,
 }: TypeFilterBarProps) {
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [buttonLayouts, setButtonLayouts] = useState<{
+    [key: string]: number;
+  }>({});
+
+  const handleLayout = (id: string, x: number) => {
+    setButtonLayouts((prev) => ({ ...prev, [id]: x }));
+  };
+
+  useEffect(() => {
+    // Scroll to selected type when it changes
+    if (buttonLayouts[selectedType] !== undefined && scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({
+        x: buttonLayouts[selectedType] - 16, // Scroll with some padding on the left
+        animated: true,
+      });
+    }
+  }, [selectedType, buttonLayouts]);
+
   return (
     <ScrollView
+      ref={scrollViewRef}
       horizontal
       showsHorizontalScrollIndicator={false}
       style={styles.filterContainer}
       contentContainerStyle={styles.filterContent}
     >
       {types.map((type) => (
-        <TouchableOpacity
+        <View
           key={type.id}
-          style={[
-            styles.filterButton,
-            selectedType === type.id && styles.filterButtonActive,
-          ]}
-          onPress={() => onSelectType(type.id)}
+          onLayout={(event) => {
+            const { x } = event.nativeEvent.layout;
+            handleLayout(type.id, x);
+          }}
         >
-          <Text
+          <TouchableOpacity
             style={[
-              styles.filterText,
-              selectedType === type.id && styles.filterTextActive,
+              styles.filterButton,
+              selectedType === type.id && styles.filterButtonActive,
             ]}
+            onPress={() => onSelectType(type.id)}
           >
-            {type.title}
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.filterText,
+                selectedType === type.id && styles.filterTextActive,
+              ]}
+            >
+              {type.title}
+            </Text>
+          </TouchableOpacity>
+        </View>
       ))}
     </ScrollView>
   );

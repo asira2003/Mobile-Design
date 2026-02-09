@@ -1,5 +1,5 @@
 import { Tabs, usePathname } from "expo-router";
-import { FontAwesome, FontAwesome6 } from "@expo/vector-icons/";
+import { FontAwesome, FontAwesome6, Ionicons } from "@expo/vector-icons/";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -49,7 +49,12 @@ export default function TabsLayout() {
             title: "Learn",
             headerShown: false,
             tabBarIcon: ({ color }) => (
-              <FontAwesome6 name="book-open" color={color} size={24} />
+              <Ionicons name="book" size={24} color={color} />
+              //  <Ionicons
+              //   name={focused ? "book" : "book-outline"}
+              //   size={24}
+              //   color={color}
+              // />
             ),
           }}
         />
@@ -57,7 +62,7 @@ export default function TabsLayout() {
           name="courses"
           options={{
             title: "Courses",
-            headerShown: false,
+            headerShown: true,
             tabBarIcon: ({ color }) => (
               <FontAwesome6 name="graduation-cap" color={color} size={24} />
             ),

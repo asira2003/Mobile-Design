@@ -34,7 +34,10 @@ export default function CoursesScreen() {
             lessons={item.lessonCount}
             image={{ uri: item["img-url"] }}
             onPress={() =>
-              router.push(`/(protected)/(tabs)/courses/${item.id}`)
+              router.push({
+                pathname: "/(protected)/(tabs)",
+                params: { courseId: item.id },
+              })
             }
           />
         )}
