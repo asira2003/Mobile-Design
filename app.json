@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
-    "scheme": "my-app-scheme",
+    "name": "Project Nova",
+    "slug": "project-nova",
+    "scheme": "project-nova-scheme",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,9 +27,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-video"
-    ]
+    "plugins": ["expo-router", "expo-video"]
   }
 }

@@ -221,8 +221,7 @@ export default function LearnListItem({
             </View>
 
             {/* Progress bar at bottom */}
-            {/* <View style={styles.progressContainer}>
-              <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+            <View style={styles.progressContainer}>
               <Slider
                 style={styles.slider}
                 minimumValue={0}
@@ -234,8 +233,7 @@ export default function LearnListItem({
                 maximumTrackTintColor="rgba(255, 255, 255, 0.3)"
                 thumbTintColor="#FFFFFF"
               />
-              <Text style={styles.timeText}>{formatTime(duration)}</Text>
-            </View> */}
+            </View>
           </Animated.View>
         </Pressable>
       </View>
@@ -328,17 +326,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   progressContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 4,
-    paddingVertical: 8,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: 12,
+    zIndex: 100,
   },
   slider: {
     flex: 1,
-    height: 40,
-    marginHorizontal: 12,
+    height: 1,
+    marginHorizontal: 0,
   },
   timeText: {
     color: "white",
@@ -359,9 +358,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "white",
-    textShadowColor: "rgba(0, 0, 0, 0.51)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 15,
+    // textShadowColor: "rgba(0, 0, 0, 0.51)",
+    // textShadowOffset: { width: 1, height: 1 },
+    // textShadowRadius: 15,
   },
 
   description: {
@@ -369,8 +368,5 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "justify",
     lineHeight: 20,
-    textShadowColor: "rgba(0, 0, 0, 0.51)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 15,
   },
 });
