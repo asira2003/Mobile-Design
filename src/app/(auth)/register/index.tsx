@@ -1,85 +1,44 @@
-import { useAuthStore } from "@/stores/authStore";
 import { router } from "expo-router";
-import { use, useState } from "react";
 import {
+  KeyboardAvoidingView,
+  StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   useColorScheme,
-  Alert,
-  Platform,
-  KeyboardAvoidingView,
+  View,
 } from "react-native";
 
-export default function LoginPage() {
+export default function RegisterScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = createStyles(isDark);
-
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const login = useAuthStore((state) => state.login);
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Please enter both email and password.");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      await login(email, password);
-    } catch (error) {
-      Alert.alert("Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={styles.title}>Let’s get started</Text>
+        <Text style={styles.subtitle}>What should we call you?</Text>
 
         <View style={styles.form}>
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="Full Name"
             placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
+            value=""
+            autoCapitalize="words"
           />
 
           <TouchableOpacity
             style={styles.loginButton}
-            onPress={handleLogin}
-            disabled={isLoading}
+            onPress={() => router.push("/register/RegisterBirth")}
           >
-            <Text style={styles.loginButtonText}>
-              {isLoading ? "Loading..." : "Login"}
-            </Text>
+            <Text style={styles.loginButtonText}>Continue</Text>
           </TouchableOpacity>
 
           <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => router.push("/register")}>
-              <Text style={styles.signupLink}>Sign Up</Text>
+            <Text style={styles.signupText}>Already have an account? </Text>
+            <TouchableOpacity onPress={() => router.push("/login")}>
+              <Text style={styles.signupLink}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>

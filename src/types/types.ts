@@ -25,3 +25,13 @@ export interface LoginResult {
   success: boolean;
   message?: string;
 }
+
+export interface Notification {
+  id: string;
+  title: string;
+  description: string;
+  timestamp: string;
+  isRead: boolean;
+  category: string;
+  actionText?: string;
+}

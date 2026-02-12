@@ -30,8 +30,8 @@ export default function TabsLayout() {
           },
           headerTitleStyle: {
             color: isDark ? "#ffffff" : "#007e2e",
-            fontSize: 24,
-            fontWeight: "bold",
+            fontSize: 32,
+            fontWeight: "700",
           },
           headerShadowVisible: false,
           tabBarStyle: {

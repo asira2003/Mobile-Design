@@ -1,10 +1,4 @@
-import {
-  View,
-  FlatList,
-  Dimensions,
-  ViewToken,
-  InteractionManager,
-} from "react-native";
+import { View, FlatList, Dimensions, ViewToken } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useRef, useState, useMemo, useEffect, useCallback } from "react";
 import { useLocalSearchParams } from "expo-router";
@@ -29,15 +23,13 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (courseId) {
-      // Defer until navigation animation completes
-      const task = InteractionManager.runAfterInteractions(() => {
+      const timeoutId = setTimeout(() => {
         setSelectedType(courseId);
-        // Reset to first item when filter changes
         setCurrentIndex(0);
         setActiveIndices(new Set([0, 1]));
-      });
+      }, 0);
 
-      return () => task.cancel();
+      return () => clearTimeout(timeoutId);
     }
   }, [courseId]);
 

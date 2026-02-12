@@ -1,85 +1,77 @@
-import { useAuthStore } from "@/stores/authStore";
 import { router } from "expo-router";
-import { use, useState } from "react";
 import {
+  KeyboardAvoidingView,
+  StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   useColorScheme,
-  Alert,
-  Platform,
-  KeyboardAvoidingView,
+  View,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useState } from "react";
 
-export default function LoginPage() {
+export default function RegisterBirthScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = createStyles(isDark);
+  const [birthday, setBirthday] = useState<Date | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const login = useAuthStore((state) => state.login);
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Please enter both email and password.");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      await login(email, password);
-    } catch (error) {
-      Alert.alert("Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    setShowPicker(false);
+    if (selectedDate) {
+      setBirthday(selectedDate);
     }
   };
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={styles.title}>Tell us about you</Text>
+        <Text style={styles.subtitle}>When’s your birthday?</Text>
 
         <View style={styles.form}>
-          <TextInput
+          <TouchableOpacity
             style={styles.input}
-            placeholder="Email"
-            placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+            onPress={() => setShowPicker(true)}
+          >
+            <Text
+              style={{
+                color: birthday
+                  ? isDark
+                    ? "#fff"
+                    : "#059439"
+                  : isDark
+                    ? "#9CA3AF"
+                    : "#6B7280",
+              }}
+            >
+              {birthday ? birthday.toLocaleDateString("en-GB") : "DD/MM/YYYY"}
+            </Text>
+          </TouchableOpacity>
+          {showPicker && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={birthday || new Date()}
+              mode="date"
+              is24Hour={true}
+              display="default"
+              onChange={handleDateChange}
+            />
+          )}
 
           <TouchableOpacity
             style={styles.loginButton}
-            onPress={handleLogin}
-            disabled={isLoading}
+            onPress={() => router.push("/register/RegisterLogin")}
           >
-            <Text style={styles.loginButtonText}>
-              {isLoading ? "Loading..." : "Login"}
-            </Text>
+            <Text style={styles.loginButtonText}>Continue</Text>
           </TouchableOpacity>
 
           <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => router.push("/register")}>
-              <Text style={styles.signupLink}>Sign Up</Text>
+            <Text style={styles.signupText}>Already have an account? </Text>
+            <TouchableOpacity onPress={() => router.push("/login")}>
+              <Text style={styles.signupLink}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -1,0 +1,79 @@
+[
+  {
+    "id": "1",
+    "title": "New Lessons Available",
+    "description": "5 new lessons added to \"Nutrition & Diet\". Check them out now!",
+    "timestamp": "2h ago",
+    "isRead": false,
+    "category": "lessons",
+    "actionText": "Update"
+  },
+  {
+    "id": "2",
+    "title": "Achievement Unlocked!",
+    "description": "You've completed 10 consecutive days of learning. Keep up the great work!",
+    "timestamp": "5h ago",
+    "isRead": false,
+    "category": "achievements"
+  },
+  {
+    "id": "3",
+    "title": "New Message from Instructor",
+    "description": "Dr. Sarah has responded to your question about healthy meal planning.",
+    "timestamp": "1d ago",
+    "isRead": true,
+    "category": "messages",
+    "actionText": "View"
+  },
+  {
+    "id": "4",
+    "title": "Course Update",
+    "description": "\"Mental Health Basics\" has been updated with new content and resources.",
+    "timestamp": "1d ago",
+    "isRead": false,
+    "category": "lessons",
+    "actionText": "View"
+  },
+  {
+    "id": "5",
+    "title": "Weekly Progress Report",
+    "description": "You've completed 15 lessons this week. That's 25% more than last week!",
+    "timestamp": "2d ago",
+    "isRead": true,
+    "category": "achievements"
+  },
+  {
+    "id": "6",
+    "title": "Reminder: Complete Your Course",
+    "description": "You're 75% through \"Sleep Science\". Finish the last 3 lessons today!",
+    "timestamp": "3d ago",
+    "isRead": true,
+    "category": "reminders",
+    "actionText": "Continue"
+  },
+  {
+    "id": "7",
+    "title": "New Course Available",
+    "description": "\"Advanced Fitness Training\" is now available. Start your journey today!",
+    "timestamp": "4d ago",
+    "isRead": true,
+    "category": "lessons",
+    "actionText": "View"
+  },
+  {
+    "id": "8",
+    "title": "Community Highlight",
+    "description": "Your study group has reached 100 members! Join the celebration discussion.",
+    "timestamp": "5d ago",
+    "isRead": true,
+    "category": "messages"
+  },
+  {
+    "id": "9",
+    "title": "Streak Alert",
+    "description": "Don't break your 20-day learning streak! Complete at least one lesson today.",
+    "timestamp": "6d ago",
+    "isRead": true,
+    "category": "reminders"
+  }
+]
