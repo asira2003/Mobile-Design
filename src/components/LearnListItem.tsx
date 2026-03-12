@@ -206,9 +206,9 @@ function LearnListItem({
         {shouldRender && player ? (
           <>
             <VideoView
-              style={{ flex: 1 }}
+              style={{ flex: 1, backgroundColor: "#000" }}
               player={player}
-              contentFit="cover"
+              contentFit="contain"
               nativeControls={false}
             />
 
@@ -235,7 +235,7 @@ function LearnListItem({
               >
                 <View style={styles.controlsInner}>
                   <View style={styles.buttonsContainer}>
-                    <Pressable
+                    {/* <Pressable
                       onPress={handleRewind}
                       style={({ pressed }) => [
                         styles.controlButton,
@@ -246,7 +246,7 @@ function LearnListItem({
                         <Text style={styles.iconText}>↺</Text>
                         <Text style={styles.secondsText}>10</Text>
                       </View>
-                    </Pressable>
+                    </Pressable> */}
 
                     <Pressable
                       onPress={handlePlayPause}
@@ -260,18 +260,18 @@ function LearnListItem({
                       </Text>
                     </Pressable>
 
-                    <Pressable
+                    {/* <Pressable
                       onPress={handleForward}
                       style={({ pressed }) => [
                         styles.controlButton,
                         pressed && styles.controlButtonPressed,
                       ]}
-                    >
+                    > 
                       <View style={styles.iconContainer}>
                         <Text style={styles.iconText}>↻</Text>
                         <Text style={styles.secondsText}>10</Text>
                       </View>
-                    </Pressable>
+                    </Pressable> */}
                   </View>
                 </View>
               </Animated.View>
@@ -295,7 +295,7 @@ function LearnListItem({
                     setProgressBarX(px);
                   });
                 }}
-                hitSlop={{ top: 40, bottom: 40, left: 0, right: 0 }}
+                hitSlop={{ top: 10, bottom: 40, left: 0, right: 0 }}
               >
                 <View style={styles.progressTrack}>
                   <Animated.View
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
     right: 8,
     padding: 16,
     zIndex: 1,
-    pointerEvents: "none",
+    pointerEvents: "box-none",
   },
   title: {
     fontSize: 24,

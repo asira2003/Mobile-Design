@@ -122,7 +122,7 @@ const createStyles = (isDark: boolean) =>
       borderRadius: 12,
       padding: 16,
       fontSize: 16,
-      color: isDark ? "#FFFFFF" : "#059439",
+      color: isDark ? "#FFFFFF" : "#000000",
     },
     loginButton: {
       backgroundColor: "#10b956",
@@ -132,7 +132,7 @@ const createStyles = (isDark: boolean) =>
       marginTop: 8,
     },
     loginButtonText: {
-      color: "#FFFFFF",
+      color: isDark ? "#000000" : "#FFFFFF",
       fontSize: 16,
       fontWeight: "bold",
     },
@@ -146,7 +146,7 @@ const createStyles = (isDark: boolean) =>
       fontSize: 14,
     },
     signupLink: {
-      color: "#10B981",
+      color: isDark ? "#10B981" : "#10B981",
       fontSize: 14,
       fontWeight: "600",
     },

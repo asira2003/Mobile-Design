@@ -45,6 +45,7 @@ const createStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      paddingTop: 10,
       backgroundColor: isDark ? "#000000" : "#ffffff",
     },
     listContent: {

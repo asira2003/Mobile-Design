@@ -148,12 +148,14 @@ const createStyles = (isDark: boolean) =>
     container: {
       flex: 1,
       backgroundColor: isDark ? "#000000" : "#ffffff",
+      paddingTop: 10,
     },
     section: {
-      marginTop: 20,
+      // marginTop: 20,
       marginHorizontal: 16,
       overflow: "hidden",
       borderRadius: 12,
+      marginBottom: 10,
     },
     sectionTitle: {
       fontSize: 12,

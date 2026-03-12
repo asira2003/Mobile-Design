@@ -122,8 +122,8 @@ const createStyles = (isDark: boolean, isRead: boolean) =>
           ? "#1e1e1e"
           : "#202020"
         : isRead
-          ? "#fafafa"
-          : "#ffffff",
+          ? "#ffffff"
+          : "#e6ffe9",
       borderRadius: 14,
       marginBottom: 14,
       shadowColor: isDark ? "#000" : "#000",
@@ -191,7 +191,13 @@ const createStyles = (isDark: boolean, isRead: boolean) =>
     },
     description: {
       fontSize: 14,
-      color: isDark ? "#9CA3AF" : "#6B7280",
+      color: isDark
+        ? isRead
+          ? "#9CA3AF"
+          : "#ffffff"
+        : isRead
+          ? "#6B7280"
+          : "#000000",
       lineHeight: 20,
       marginBottom: 8,
     },

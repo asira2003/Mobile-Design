@@ -101,7 +101,7 @@ const createStyles = (isDark: boolean) =>
       marginTop: 8,
     },
     loginButtonText: {
-      color: "#FFFFFF",
+      color: isDark ? "#000000" : "#FFFFFF",
       fontSize: 16,
       fontWeight: "bold",
     },

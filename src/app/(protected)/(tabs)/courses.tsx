@@ -51,6 +51,7 @@ export default function CoursesScreen() {
 const createStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
+      paddingTop: 10,
       flex: 1,
       backgroundColor: isDark ? "#000000" : "#ffffff",
     },

@@ -29,19 +29,23 @@ export default function TabsLayout() {
             backgroundColor: isDark ? "#000" : "#fff",
           },
           headerTitleStyle: {
-            color: isDark ? "#ffffff" : "#007e2e",
+            color: isDark ? "#ffffff" : "#000",
             fontSize: 32,
             fontWeight: "700",
+            textAlign: "left",
           },
           headerShadowVisible: false,
+          headerTitleAlign: "left",
           tabBarStyle: {
-            backgroundColor: isDark ? "#000" : "#fff",
-            borderTopWidth: 1,
-            borderTopColor: isDark ? "#333" : "#e0e0e0",
+            backgroundColor: isDark ? "#171717" : "#fff",
+            borderTopWidth: 0,
+            borderColor: "transparent",
             elevation: 0,
             shadowOpacity: 0,
           },
-          animation: "shift",
+          tabBarActiveTintColor: isDark ? "#ffffff" : "#000000",
+          tabBarInactiveTintColor: "#8E8E93",
+          animation: "fade",
         }}
       >
         <Tabs.Screen
@@ -49,6 +53,11 @@ export default function TabsLayout() {
           options={{
             title: "Learn",
             headerShown: false,
+            tabBarStyle: {
+              backgroundColor: "#000",
+            },
+            tabBarActiveTintColor: "#fff",
+            tabBarInactiveTintColor: "#666",
             tabBarIcon: ({ color }) => (
               <Ionicons name="book" size={24} color={color} />
               //  <Ionicons

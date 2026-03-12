@@ -7,24 +7,22 @@ import {
   ScrollView,
 } from "react-native";
 import { useState } from "react";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import filterTypes from "@assets/data/filterTypes.json";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
-const courseIcons: Record<
-  string,
-  { name: any; library: "ionicons" | "material"; color: string }
-> = {
-  "TP-01": { name: "nutrition", library: "material", color: "#4CAF50" },
-  "TP-02": { name: "barbell", library: "ionicons", color: "#FF9800" },
-  "TP-03": { name: "brain", library: "material", color: "#9C27B0" },
-  "TP-04": { name: "moon", library: "ionicons", color: "#2196F3" },
-  "TP-05": { name: "heart", library: "ionicons", color: "#E91E63" },
-  "TP-06": { name: "medical", library: "ionicons", color: "#F44336" },
-  "TP-07": { name: "people", library: "ionicons", color: "#FFC107" },
-  "TP-08": { name: "restaurant", library: "ionicons", color: "#00BCD4" },
-};
+const interests: { id: string; title: string; icon: any }[] = [
+  { id: "TP-01", title: "Technology", icon: "laptop-outline" },
+  { id: "TP-02", title: "Fashion", icon: "heart-outline" },
+  { id: "TP-03", title: "Food", icon: "restaurant-outline" },
+  { id: "TP-04", title: "Travel", icon: "airplane-outline" },
+  { id: "TP-05", title: "Sports", icon: "trophy-outline" },
+  { id: "TP-06", title: "Music", icon: "musical-notes-outline" },
+  { id: "TP-07", title: "Art", icon: "color-palette-outline" },
+  { id: "TP-08", title: "Gaming", icon: "game-controller-outline" },
+  { id: "TP-09", title: "Fitness", icon: "barbell-outline" },
+  { id: "TP-10", title: "Photography", icon: "camera-outline" },
+];
 
 export default function CourseSelectScreen() {
   const [selectedCourses, setSelectedCourses] = useState<string[]>(["TP-01"]);
@@ -42,56 +40,56 @@ export default function CourseSelectScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.title}>Choose Your Interests</Text>
-          <Text style={styles.subtitle}>
-            Select courses you'd like to start with
-          </Text>
-          <Text style={styles.smalltitle}>You'll get access to all course</Text>
-          <View style={styles.grid}>
-            {filterTypes.map((course) => {
-              const isSelected = selectedCourses.includes(course.id);
-              const iconConfig = courseIcons[course.id];
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>Choose Your Interests</Text>
+        <Text style={styles.subtitle}>
+          Select your interests to personalize your experience
+        </Text>
 
-              return (
-                <TouchableOpacity
-                  key={course.id}
+        <View style={styles.grid}>
+          {interests.map((item) => {
+            const isSelected = selectedCourses.includes(item.id);
+            return (
+              <TouchableOpacity
+                key={item.id}
+                style={[styles.card, isSelected && styles.cardSelected]}
+                onPress={() => toggleCourse(item.id)}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name={item.icon}
+                  size={34}
+                  color={
+                    isSelected ? "#16a34a" : isDark ? "#9CA3AF" : "#374151"
+                  }
+                />
+                <Text
                   style={[
-                    styles.courseCard,
-                    isSelected ? styles.selectedCard : styles.unselectedCard,
+                    styles.cardLabel,
+                    isSelected && styles.cardLabelSelected,
                   ]}
-                  onPress={() => toggleCourse(course.id)}
                 >
-                  <View style={styles.cardContent}>
-                    {iconConfig.library === "ionicons" ? (
-                      <Ionicons
-                        name={iconConfig.name}
-                        size={48}
-                        color={iconConfig.color}
-                      />
-                    ) : (
-                      <MaterialCommunityIcons
-                        name={iconConfig.name}
-                        size={48}
-                        color={iconConfig.color}
-                      />
-                    )}
-
-                    <Text style={styles.courseTitle}>{course.title}</Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={() => router.push("/(protected)/(tabs)")}
-            >
-              <Text style={styles.loginButtonText}>Continue</Text>
-            </TouchableOpacity>
-          </View>
+                  {item.title}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.continueButton}
+          onPress={() => router.push("/(protected)/(tabs)")}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.continueButtonText}>Continue</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -100,94 +98,74 @@ const createStyles = (isDark: boolean) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
-      backgroundColor: isDark ? "#000000" : "#F9FAFB",
+      backgroundColor: isDark ? "#0F0F0F" : "#FFFFFF",
     },
-    container: {
+    scrollView: {
       flex: 1,
-      backgroundColor: isDark ? "#000000" : "#F9FAFB",
     },
-    content: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      paddingHorizontal: 24,
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingTop: 28,
+      paddingBottom: 16,
     },
     title: {
-      fontSize: 32,
-      fontWeight: "bold",
-      color: isDark ? "#FFFFFF" : "#059439",
-      marginBottom: 8,
-      textAlign: "center",
+      fontSize: 28,
+      fontWeight: "700",
+      color: isDark ? "#F9FAFB" : "#111827",
+      marginBottom: 6,
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: 14,
       color: isDark ? "#9CA3AF" : "#6B7280",
-      marginBottom: 10,
-      textAlign: "center",
-    },
-    smalltitle: {
-      fontSize: 12,
-      color: isDark ? "#9CA3AF" : "#6B7280",
-      marginBottom: 32,
-      textAlign: "center",
+      marginBottom: 28,
     },
     grid: {
       flexDirection: "row",
       flexWrap: "wrap",
-      justifyContent: "space-between",
+      gap: 12,
     },
-    courseCard: {
-      width: "48%",
-      borderRadius: 16,
-      padding: 20,
-      marginBottom: 16,
+    card: {
+      width: "47.5%",
+      borderRadius: 14,
+      paddingVertical: 26,
+      paddingHorizontal: 12,
       alignItems: "center",
       justifyContent: "center",
-      minHeight: 100,
+      gap: 12,
+      borderWidth: 1.5,
+      backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+      borderColor: isDark ? "#2C2C2E" : "#E5E7EB",
     },
-    selectedCard: {
-      backgroundColor: isDark ? "#163300" : "#dcf8c6",
-      shadowColor: "#007912",
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 1,
-      shadowRadius: 10,
-      elevation: 10,
-      borderColor: "#3caa4c",
-      borderWidth: 1,
+    cardSelected: {
+      backgroundColor: isDark ? "#001105" : "#F0FDF4",
+      borderColor: "#16a34a",
     },
-    unselectedCard: {
-      backgroundColor: isDark ? "#1e1e1e" : "#f0f0f0",
-      borderColor: isDark ? "#333" : "#ddd",
-      borderWidth: 1,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0,
-      shadowRadius: 2,
-      elevation: 2,
-    },
-    cardContent: {
-      alignItems: "center",
-      justifyContent: "center",
-      flex: 1,
-    },
-    courseTitle: {
+    cardLabel: {
       fontSize: 14,
-      fontWeight: "600",
-      marginTop: 12,
+      fontWeight: "500",
+      color: isDark ? "#D1D5DB" : "#374151",
       textAlign: "center",
-      color: isDark ? "#FFFFFF" : "#000000",
     },
-    loginButton: {
-      backgroundColor: "#10b956",
-      borderRadius: 12,
-      padding: 16,
+    cardLabelSelected: {
+      color: "#16a34a",
+      fontWeight: "600",
+    },
+    footer: {
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: isDark ? "#0F0F0F" : "#FFFFFF",
+      borderTopWidth: 1,
+      borderTopColor: isDark ? "#1C1C1E" : "#F3F4F6",
+    },
+    continueButton: {
+      backgroundColor: "#16a34a",
+      borderRadius: 14,
+      paddingVertical: 16,
       alignItems: "center",
-      marginTop: 8,
-      minWidth: "100%",
     },
-    loginButtonText: {
-      color: "#FFFFFF",
+    continueButtonText: {
+      color: isDark ? "#000000" : "#FFFFFF",
       fontSize: 16,
-      fontWeight: "bold",
+      fontWeight: "700",
     },
   });
